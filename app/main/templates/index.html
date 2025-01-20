@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to Yizkor Flask App</title>
-</head>
-<body>
-    <h1>Welcome to Yizkor Flask App</h1>
-    <p>Your place to read and share articles.</p>
-    <a href="{{ url_for('auth.login') }}">Login</a> | 
-    <a href="{{ url_for('auth.register') }}">Register</a>
-</body>
-</html>
+{% extends "layout.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1>Welcome to Your Website</h1>
+<p>This is the home page content.</p>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+
+{% block title %}Article Title{% endblock %}
+
+{% block content %}
+<article>
+    <h1>Article Title</h1>
+    <p class="author-date">Author | Date</p>
+    <img src="{{ url_for('static', filename='placeholder.jpg') }}" alt="Article Image">
+    <p>Article text...</p>
+    <video src="{{ url_for('static', filename='placeholder.mp4') }}" controls></video>
+    <p>More article text...</p>
+    <div class="cta-buttons">
+        <button>Share</button>
+        <button>Subscribe</button>
+    </div>
+</article>
+{% endblock %}

@@ -1,0 +1,125 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+nav ul li {
+    margin-left: 20px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.search-bar input {
+    padding: 5px;
+    font-size: 16px;
+}
+
+/* Dropdown Menu */ 
+.dropdown .dropbtn { 
+    cursor: pointer; 
+} 
+
+.dropdown-content { 
+    display: none; 
+    position: absolute; 
+    background-color: #f9f9f9; 
+    min-width: 160px; 
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); 
+    z-index: 1; 
+} 
+
+.dropdown-content a { 
+    color: black; 
+    padding: 12px 16px; 
+    text-decoration: none; 
+    display: block; 
+} 
+
+.dropdown-content a:hover { 
+    background-color: #f1f1f1; 
+} 
+
+.dropdown:hover .dropdown-content { 
+    display: block;
+}
+
+main {
+    display: flex;
+    padding: 20px;
+}
+
+article {
+    flex: 2;
+    padding-right: 20px;
+}
+
+article h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+article .author-date {
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+aside {
+    flex: 1;
+}
+
+aside section {
+    margin-bottom: 20px;
+}
+
+aside h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+footer {
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+footer .contact,
+footer .social-media,
+footer .copyright {
+    font-size: 14px;
+}
+
+footer .social-media a {
+    margin-left: 10px;
+    color: white;
+    text-decoration: none;
+}

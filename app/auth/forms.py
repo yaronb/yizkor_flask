@@ -1,7 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, TextAreaField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
 from app.models import User
+
+class ArticleForm(FlaskForm): 
+    title = StringField('Title', validators=[DataRequired()]) 
+    body = TextAreaField('Content', validators=[DataRequired()]) 
+    submit = SubmitField('Publish')
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])

@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block title %}Create Article{% endblock %}
+
+{% block content %}
+<h1>Create Article</h1>
+<form method="POST" action="{{ url_for('main.create_article') }}">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+        {{ form.title.label }}
+        {{ form.title(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.body.label }}
+        {{ form.body(class="form-control", rows=10) }}
+    </div>
+    <div class="form-group">
+        {{ form.submit(class="btn btn-primary") }}
+    </div>
+</form>
+{% endblock %}

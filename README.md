@@ -1,0 +1,1 @@
+This project records family members who passed and sends an email reminder to those who want to be reminded

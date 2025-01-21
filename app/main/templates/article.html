@@ -1,19 +1,42 @@
 {% extends "layout.html" %}
 
-{% block title %}{{ post.title }}{% endblock %}
+{% block title %}Article{% endblock %}
 
 {% block content %}
-<h1>{{ post.title }}</h1>
-<p class="author-date">Author: {{ post.author.username }} | Date: {{ post.publication_date.strftime('%Y-%m-%d') }}</p>
-
-{% for milestone in post.milestones %}
-<section>
-    <h2>{{ milestone.title }}</h2>
-    <hr>
-    {% if milestone.image_path %}
-    <img src="{{ url_for('static', filename=milestone.image_path) }}" alt="{{ milestone.title }}">
+<article>
+    <h1>{{ post.title }}</h1>
+    <p class="author-date">By {{ post.author.username }} on {{ post.publication_date.strftime('%B %d, %Y') }}</p>
+    {% for milestone in post.milestones %}
+    <section>
+        <h2>{{ milestone.title }}</h2>
+        <p>{{ milestone.content }}</p>
+        {% if milestone.image_path %}
+        <img src="{{ url_for('static', filename=milestone.image_path) }}" alt="{{ milestone.title }}" class="thumbnail" onclick="openModal('{{ url_for('static', filename=milestone.image_path) }}')">
+        {% endif %}
+    </section>
+    {% endfor %}
+    {% if current_user.is_authenticated and current_user == post.author %}
+    <a href="{{ url_for('main.edit_article', post_id=post.id) }}" class="btn btn-primary">Edit</a>
     {% endif %}
-    <p>{{ milestone.content }}</p>
-</section>
-{% endfor %}
+</article>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+  <span class="close" onclick="closeModal()">&times;</span>
+  <img class="modal-content" id="modalImage">
+</div>
+
+<script>
+function openModal(imageSrc) {
+    var modal = document.getElementById("myModal");
+    var modalImage = document.getElementById("modalImage");
+    modal.style.display = "block";
+    modalImage.src = imageSrc;
+}
+
+function closeModal() {
+    var modal = document.getElementById("myModal");
+    modal.style.display = "none";
+}
+</script>
 {% endblock %}

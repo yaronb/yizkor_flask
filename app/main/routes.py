@@ -1,6 +1,6 @@
 import os
 from werkzeug.utils import secure_filename 
-from flask import current_app, Blueprint, render_template, redirect, url_for, flash 
+from flask import current_app, Blueprint, render_template, redirect, url_for, flash, request 
 from flask_login import current_user, login_required # Add this import 
 from app import db 
 from app.models import Post, Milestone 
@@ -33,12 +33,59 @@ def article(post_id):
 @main.route('/articles') 
 def articles(): 
     try: 
-        posts = Post.query.order_by(Post.publication_date.desc()).all
-        return render_template('articles.html', post=posts) 
+        posts = Post.query.order_by(Post.publication_date.desc()).all()  # Correctly call all()
+        print(f"Fetched Posts: {posts}")
+        return render_template('articles.html', posts=posts)  # Correctly pass posts
     except Exception as e: 
         print(f"Error rendering template: {e}") 
         return str(e) 
     
+@main.route('/edit_article/<int:post_id>', methods=['GET', 'POST'])
+@login_required
+def edit_article(post_id):
+    post = Post.query.get_or_404(post_id)
+    if current_user.role != 'author' or post.author != current_user:
+        flash('You do not have permission to edit this article.', 'danger')
+        return redirect(url_for('main.index'))
+
+    form = ArticleForm()
+    if form.validate_on_submit():
+        post.title = form.title.data
+        db.session.commit()
+
+        for milestone_form in form.milestones.data:
+            milestone = Milestone.query.filter_by(post_id=post.id, title=milestone_form['title']).first()
+            if milestone:
+                milestone.content = milestone_form['content']
+                if milestone_form['image']:
+                    filename = secure_filename(milestone_form['image'].filename)
+                    milestone_form['image'].save(os.path.join(current_app.root_path, 'static', filename))
+                    milestone.image_path = filename
+            else:
+                new_milestone = Milestone(title=milestone_form['title'],
+                                          content=milestone_form['content'],
+                                          post=post)
+                if milestone_form['image']:
+                    filename = secure_filename(milestone_form['image'].filename)
+                    milestone_form['image'].save(os.path.join(current_app.root_path, 'static', filename))
+                    new_milestone.image_path = filename
+                db.session.add(new_milestone)
+
+        db.session.commit()
+        flash('Your article has been updated!', 'success')
+        return redirect(url_for('main.article', post_id=post.id))
+    elif request.method == 'GET':
+        form.title.data = post.title
+        milestones = Milestone.query.filter_by(post_id=post.id).all()
+        for milestone in milestones:
+            form.milestones.append_entry({
+                'title': milestone.title,
+                'content': milestone.content,
+                'image': None
+            })
+
+    return render_template('edit_article.html', form=form, post=post)
+
 
 @main.route('/about') 
 def about(): 
@@ -65,6 +112,8 @@ def create_article():
 
     form = ArticleForm()
     if form.validate_on_submit():
+        print("Form validated successfully!") 
+        print(f"Title: {form.title.data}")        
         post = Post(title=form.title.data, author=current_user)
         db.session.add(post)
         db.session.commit()
@@ -76,6 +125,7 @@ def create_article():
             
             if milestone_form['image']:
                 filename = secure_filename(milestone_form['image'].filename)
+                print(f"Saving image: {filename}")
                 milestone_form['image'].save(os.path.join(current_app.root_path, 'static', filename))
                 milestone.image_path = filename
                 
@@ -84,6 +134,8 @@ def create_article():
         db.session.commit()
         flash('Your article has been published!', 'success')
         return redirect(url_for('main.index'))
-
+    else: 
+        print("Form validation failed!") 
+        print(form.errors)
     return render_template('create_article.html', form=form)
 

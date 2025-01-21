@@ -2,11 +2,13 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from flask_wtf.csrf import CSRFProtect
 
 # Initialize extensions
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
+csrf = CSRFProtect()
 login.login_view = 'auth.login'
 
 def create_app():
@@ -17,6 +19,7 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
     login.init_app(app)
+    csrf.init_app(app)
 
     # Register blueprints
     from app.auth.routes import auth as auth_bp

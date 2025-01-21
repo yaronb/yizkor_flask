@@ -163,7 +163,7 @@ form {
 }
 
 .thumbnail {
-    max-width: 200px; /* Adjust the size as needed */
+    max-width: 150px; /* Adjust the size as needed */
     cursor: pointer;
 }
 

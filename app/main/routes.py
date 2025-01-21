@@ -39,7 +39,38 @@ def articles():
     except Exception as e: 
         print(f"Error rendering template: {e}") 
         return str(e) 
+
     
+@main.route('/create_article', methods=['GET', 'POST'])
+@login_required
+def create_article():
+    if current_user.role != 'author':
+        flash('You do not have permission to create an article.', 'danger')
+        return redirect(url_for('main.index'))
+
+    form = ArticleForm()
+    if form.validate_on_submit():
+        post = Post(title=form.title.data, author=current_user)
+        db.session.add(post)
+        db.session.commit()
+        
+        for milestone_form in form.milestones.data:
+            milestone = Milestone(title=milestone_form['title'],
+                                  content=milestone_form['content'],
+                                  post=post)
+            if milestone_form['image']:
+                filename = secure_filename(milestone_form['image'].filename)
+                image_path = os.path.join(current_app.root_path, 'static/images', filename)
+                milestone_form['image'].save(image_path)
+                milestone.image_path = 'images/' + filename
+                
+            db.session.add(milestone)
+        
+        db.session.commit()
+        flash('Your article has been published!', 'success')
+        return redirect(url_for('main.index'))
+    return render_template('create_article.html', form=form)
+
 @main.route('/edit_article/<int:post_id>', methods=['GET', 'POST'])
 @login_required
 def edit_article(post_id):
@@ -59,16 +90,18 @@ def edit_article(post_id):
                 milestone.content = milestone_form['content']
                 if milestone_form['image']:
                     filename = secure_filename(milestone_form['image'].filename)
-                    milestone_form['image'].save(os.path.join(current_app.root_path, 'static', filename))
-                    milestone.image_path = filename
+                    image_path = os.path.join(current_app.root_path, 'static/images', filename)
+                    milestone_form['image'].save(image_path)
+                    milestone.image_path = 'images/' + filename
             else:
                 new_milestone = Milestone(title=milestone_form['title'],
                                           content=milestone_form['content'],
                                           post=post)
                 if milestone_form['image']:
                     filename = secure_filename(milestone_form['image'].filename)
-                    milestone_form['image'].save(os.path.join(current_app.root_path, 'static', filename))
-                    new_milestone.image_path = filename
+                    image_path = os.path.join(current_app.root_path, 'static/images', filename)
+                    milestone_form['image'].save(image_path)
+                    new_milestone.image_path = 'images/' + filename
                 db.session.add(new_milestone)
 
         db.session.commit()
@@ -87,6 +120,7 @@ def edit_article(post_id):
     return render_template('edit_article.html', form=form, post=post)
 
 
+
 @main.route('/about') 
 def about(): 
     try: 
@@ -102,40 +136,5 @@ def contact():
     except Exception as e: 
         print(f"Error rendering template: {e}") 
         return str(e)
-    
-@main.route('/create_article', methods=['GET', 'POST'])
-@login_required
-def create_article():
-    if current_user.role != 'author':
-        flash('You do not have permission to create an article.', 'danger')
-        return redirect(url_for('main.index'))
 
-    form = ArticleForm()
-    if form.validate_on_submit():
-        print("Form validated successfully!") 
-        print(f"Title: {form.title.data}")        
-        post = Post(title=form.title.data, author=current_user)
-        db.session.add(post)
-        db.session.commit()
-        
-        for milestone_form in form.milestones.data:
-            milestone = Milestone(title=milestone_form['title'],
-                                  content=milestone_form['content'],
-                                  post=post)
-            
-            if milestone_form['image']:
-                filename = secure_filename(milestone_form['image'].filename)
-                print(f"Saving image: {filename}")
-                milestone_form['image'].save(os.path.join(current_app.root_path, 'static', filename))
-                milestone.image_path = filename
-                
-            db.session.add(milestone)
-        
-        db.session.commit()
-        flash('Your article has been published!', 'success')
-        return redirect(url_for('main.index'))
-    else: 
-        print("Form validation failed!") 
-        print(form.errors)
-    return render_template('create_article.html', form=form)
 

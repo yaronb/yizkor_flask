@@ -21,3 +21,6 @@ Thumbs.db
 config.py
 *.cfg
 *.ini
+
+# Ignore images directory 
+static/images/

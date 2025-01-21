@@ -5,9 +5,12 @@ from app.models import User
 
 class ArticleForm(FlaskForm): 
     title = StringField('Title', validators=[DataRequired()]) 
-    early_life = TextAreaField('Early Life', validators=[DataRequired()]) # Add this field 
-    life = TextAreaField('Life', validators=[DataRequired()]) # Add this field 
-    death = TextAreaField('Death', validators=[DataRequired()]) # Add this field 
+    early_life = TextAreaField('Early Life', validators=[DataRequired()])  
+    life = TextAreaField('Life', validators=[DataRequired()])  
+    death = TextAreaField('Death', validators=[DataRequired()]) 
+    early_life_he = TextAreaField('Early Life (Hebrew)', validators=[DataRequired()])  
+    life_he = TextAreaField('Life (Hebrew)', validators=[DataRequired()])  
+    death_he = TextAreaField('Death (Hebrew)', validators=[DataRequired()])     
     submit = SubmitField('Publish')
 
 class LoginForm(FlaskForm):

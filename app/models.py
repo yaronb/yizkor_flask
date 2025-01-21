@@ -25,7 +25,9 @@ class User(UserMixin, db.Model):
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(140), nullable=False)
-    body = db.Column(db.Text, nullable=False)
+    early_life = db.Column(db.Text, nullable=False) 
+    life = db.Column(db.Text, nullable=False) 
+    death = db.Column(db.Text, nullable=False)
     publication_date = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     comments = db.relationship('Comment', backref='post', lazy=True)

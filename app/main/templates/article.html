@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<h1>{{ post.title }}</h1>
+<p class="author-date">Author: {{ post.author.username }} | Date: {{ post.publication_date.strftime('%Y-%m-%d') }}</p>
+
+<section>
+    <h2>Early Life</h2>
+    <hr>
+    <p>{{ post.early_life }}</p>
+</section>
+
+<section>
+    <h2>Life</h2>
+    <hr>
+    <p>{{ post.life }}</p>
+</section>
+
+<section>
+    <h2>Death</h2>
+    <hr>
+    <p>{{ post.death }}</p>
+</section>
+{% endblock %}

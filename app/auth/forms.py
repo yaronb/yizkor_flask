@@ -5,7 +5,9 @@ from app.models import User
 
 class ArticleForm(FlaskForm): 
     title = StringField('Title', validators=[DataRequired()]) 
-    body = TextAreaField('Content', validators=[DataRequired()]) 
+    early_life = TextAreaField('Early Life', validators=[DataRequired()]) # Add this field 
+    life = TextAreaField('Life', validators=[DataRequired()]) # Add this field 
+    death = TextAreaField('Death', validators=[DataRequired()]) # Add this field 
     submit = SubmitField('Publish')
 
 class LoginForm(FlaskForm):

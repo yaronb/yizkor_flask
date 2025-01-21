@@ -11,8 +11,16 @@
         {{ form.title(class="form-control") }}
     </div>
     <div class="form-group">
-        {{ form.body.label }}
-        {{ form.body(class="form-control", rows=10) }}
+        {{ form.early_life.label }}
+        {{ form.early_life(class="form-control", rows=5) }}
+    </div>
+    <div class="form-group">
+        {{ form.life.label }}
+        {{ form.life(class="form-control", rows=5) }}
+    </div>
+    <div class="form-group">
+        {{ form.death.label }}
+        {{ form.death(class="form-control", rows=5) }}
     </div>
     <div class="form-group">
         {{ form.submit(class="btn btn-primary") }}

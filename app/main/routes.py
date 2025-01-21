@@ -23,13 +23,21 @@ def dashboard():
         print(f"Error rendering template: {e}")
         return str(e)
     
+@main.route('/article/<int:post_id>') 
+def article(post_id): 
+    post = Post.query.get_or_404(post_id) 
+    return render_template('article.html', post=post)    
+    
 @main.route('/articles') 
 def articles(): 
     try: 
-        return render_template('articles.html') 
+        posts = Post.query.order_by(Post.publication_date.desc()).all
+        return render_template('articles.html', post=posts) 
     except Exception as e: 
         print(f"Error rendering template: {e}") 
         return str(e) 
+    
+
 @main.route('/about') 
 def about(): 
     try: 

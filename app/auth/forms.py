@@ -1,16 +1,16 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, FileField, TextAreaField, PasswordField, BooleanField, SubmitField, FieldList, FormField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
 from app.models import User
 
+class MilestoneForm(FlaskForm): 
+    title = StringField('Name of Milestone', validators=[DataRequired()]) 
+    content = TextAreaField('Content', validators=[DataRequired()]) 
+    image = FileField('Image') 
+
 class ArticleForm(FlaskForm): 
-    title = StringField('Title', validators=[DataRequired()]) 
-    early_life = TextAreaField('Early Life', validators=[DataRequired()])  
-    life = TextAreaField('Life', validators=[DataRequired()])  
-    death = TextAreaField('Death', validators=[DataRequired()]) 
-    early_life_he = TextAreaField('Early Life (Hebrew)', validators=[DataRequired()])  
-    life_he = TextAreaField('Life (Hebrew)', validators=[DataRequired()])  
-    death_he = TextAreaField('Death (Hebrew)', validators=[DataRequired()])     
+    title = StringField('Name of Person', validators=[DataRequired()]) 
+    milestones = FieldList(FormField(MilestoneForm), min_entries=1, max_entries=10) 
     submit = SubmitField('Publish')
 
 class LoginForm(FlaskForm):

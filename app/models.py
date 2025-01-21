@@ -25,15 +25,24 @@ class User(UserMixin, db.Model):
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(140), nullable=False)
-    early_life = db.Column(db.Text, nullable=False) 
-    life = db.Column(db.Text, nullable=False) 
-    death = db.Column(db.Text, nullable=False)
     publication_date = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     comments = db.relationship('Comment', backref='post', lazy=True)
+    milestones = db.relationship('Milestone', backref='post', lazy=True, cascade="all, delete-orphan")  # New relationship
 
     def __repr__(self):
         return '<Post {}>'.format(self.title)
+
+class Milestone(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(140), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    image_path = db.Column(db.String(120))
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+    
+    def __repr__(self):
+        return '<Milestone {}>'.format(self.title)
+
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -6,21 +6,14 @@
 <h1>{{ post.title }}</h1>
 <p class="author-date">Author: {{ post.author.username }} | Date: {{ post.publication_date.strftime('%Y-%m-%d') }}</p>
 
+{% for milestone in post.milestones %}
 <section>
-    <h2>Early Life</h2>
+    <h2>{{ milestone.title }}</h2>
     <hr>
-    <p>{{ post.early_life }}</p>
+    {% if milestone.image_path %}
+    <img src="{{ url_for('static', filename=milestone.image_path) }}" alt="{{ milestone.title }}">
+    {% endif %}
+    <p>{{ milestone.content }}</p>
 </section>
-
-<section>
-    <h2>Life</h2>
-    <hr>
-    <p>{{ post.life }}</p>
-</section>
-
-<section>
-    <h2>Death</h2>
-    <hr>
-    <p>{{ post.death }}</p>
-</section>
+{% endfor %}
 {% endblock %}

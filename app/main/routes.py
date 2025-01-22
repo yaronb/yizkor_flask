@@ -42,47 +42,49 @@ def articles():
         return str(e) 
 
     
-@main.route('/create_article', methods=['GET', 'POST']) 
-@login_required 
-def create_article(): 
-    if current_user.role != 'author': 
-        flash('You do not have permission to create an article.', 'danger') 
-        return redirect(url_for('main.index')) 
-    form = ArticleForm() 
-    if form.validate_on_submit(): 
-        gregorian_death_date = form.gregorian_death_date.data 
-        hebrew_year, hebrew_month, hebrew_day = gregorian_to_hebrew(gregorian_death_date) 
+@main.route('/create_article', methods=['GET', 'POST'])
+@login_required
+def create_article():
+    if current_user.role != 'author':
+        flash('You do not have permission to create an article.', 'danger')
+        return redirect(url_for('main.index'))
+
+    form = ArticleForm()
+    if form.validate_on_submit():
+        gregorian_death_date = form.gregorian_death_date.data
+        hebrew_year, hebrew_month, hebrew_day = gregorian_to_hebrew(gregorian_death_date)
         
-        post = Post( 
-            title=form.title.data, 
-            gregorian_death_date=gregorian_death_date, 
-            hebrew_year=hebrew_year, 
-            hebrew_month=hebrew_month, 
-            hebrew_day=hebrew_day, 
-            author=current_user 
-            ) 
+        post = Post(
+            title=form.title.data,
+            gregorian_death_date=gregorian_death_date,
+            hebrew_year=hebrew_year,
+            hebrew_month=hebrew_month,
+            hebrew_day=hebrew_day,
+            author=current_user
+        )
         
-        db.session.add(post) 
-        db.session.commit() 
+        db.session.add(post)
+        db.session.commit()
         
-        for milestone_form in form.milestones.data: 
-            milestone = Milestone( 
-                title=milestone_form['title'], 
-                content=milestone_form['content'], 
-                post=post 
-                ) 
-            if milestone_form['image']: 
-                filename = secure_filename(milestone_form['image'].filename) 
-                image_path = os.path.join(current_app.root_path, 'static/images', filename) 
-                milestone_form['image'].save(image_path) 
-                milestone.image_path = 'images/' + filename 
+        for milestone_form in form.milestones.data:
+            milestone = Milestone(
+                title=milestone_form['title'],
+                content=milestone_form['content'],
+                post=post
+            )
+            if milestone_form['image']:
+                filename = secure_filename(milestone_form['image'].filename)
+                image_path = os.path.join(current_app.root_path, 'static/images', filename)
+                milestone_form['image'].save(image_path)
+                milestone.image_path = 'images/' + filename
                 
-                db.session.add(milestone) 
-                
-            db.session.commit() 
-            flash('Your article has been published!', 'success') 
-            return redirect(url_for('main.index')) 
-        return render_template('create_article.html', form=form)
+            db.session.add(milestone)
+        
+        db.session.commit()
+        flash('Your article has been published!', 'success')
+        return redirect(url_for('main.index'))
+    
+    return render_template('create_article.html', form=form)
 
 @main.route('/edit_article/<int:post_id>', methods=['GET', 'POST']) 
 @login_required 

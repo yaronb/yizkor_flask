@@ -3,6 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_wtf.csrf import CSRFProtect
+from flask_mail import Mail
+
+mail = Mail()
 
 # Initialize extensions
 db = SQLAlchemy()
@@ -27,10 +30,25 @@ def create_app():
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(main_bp)
 
-    from app.models import User
+    from app.models import User, Post  # Import models here
 
     @login.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
+
+    # Mail configuration
+    app.config['MAIL_SERVER'] = 'smtp.example.com'
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_USERNAME'] = 'your-email@example.com'
+    app.config['MAIL_PASSWORD'] = 'your-email-password'
+    
+    mail.init_app(app)
+    
+    # Initialize scheduler within app context
+    with app.app_context():
+        from app.utils import scheduler, check_dates_and_send_reminders  # Import scheduler and function within the app context
+        scheduler.add_job(func=check_dates_and_send_reminders, trigger="interval", days=1, args=[db, Post])
+        scheduler.start()  # Start the scheduler
 
     return app

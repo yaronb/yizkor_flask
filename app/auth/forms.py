@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, FileField, TextAreaField, PasswordField, BooleanField, SubmitField, FieldList, FormField
+from wtforms import StringField, FileField, TextAreaField, DateField, PasswordField, BooleanField, SubmitField, FieldList, FormField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
 from app.models import User
 
@@ -8,10 +8,11 @@ class MilestoneForm(FlaskForm):
     content = TextAreaField('Content', validators=[DataRequired()]) 
     image = FileField('Image') 
 
-class ArticleForm(FlaskForm): 
-    title = StringField('Name of Person', validators=[DataRequired()]) 
-    milestones = FieldList(FormField(MilestoneForm), min_entries=1, max_entries=10) 
-    submit = SubmitField('Publish')
+class ArticleForm(FlaskForm):
+   title = StringField('Title', validators=[DataRequired()]) 
+   gregorian_death_date = DateField('Gregorian Death Date', format='%Y-%m-%d', validators=[DataRequired()]) 
+   milestones = FieldList(FormField(MilestoneForm), min_entries=1, max_entries=10) 
+   submit = SubmitField('Publish')
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])

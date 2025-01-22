@@ -10,6 +10,10 @@
         {{ form.title.label }}
         {{ form.title(class="form-control") }}
     </div>
+    <div class="form-group">
+        {{ form.gregorian_death_date.label }}
+        {{ form.gregorian_death_date(class="form-control") }}
+    </div>
     <div id="milestones">
         {% for milestone in form.milestones %}
         <div class="form-group">

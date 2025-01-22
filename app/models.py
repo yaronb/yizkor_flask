@@ -1,7 +1,8 @@
-from datetime import datetime
+from datetime import date, datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 from flask_login import UserMixin
+from .utils import gregorian_to_hebrew
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -27,9 +28,16 @@ class Post(db.Model):
     title = db.Column(db.String(140), nullable=False)
     publication_date = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    gregorian_death_date = db.Column(db.Date, nullable=False) 
+    hebrew_year = db.Column(db.Integer, nullable=False) 
+    hebrew_month = db.Column(db.Integer, nullable=False) 
+    hebrew_day = db.Column(db.Integer, nullable=False)
     comments = db.relationship('Comment', backref='post', lazy=True)
     milestones = db.relationship('Milestone', backref='post', lazy=True, cascade="all, delete-orphan")  # New relationship
 
+    def set_hebrew_death_date(self):
+        self.hebrew_year, self.hebrew_month, self.hebrew_day = gregorian_to_hebrew(self.gregorian_death_date)
+    
     def __repr__(self):
         return '<Post {}>'.format(self.title)
 

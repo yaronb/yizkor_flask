@@ -32,6 +32,7 @@ class Post(db.Model):
     hebrew_year = db.Column(db.Integer, nullable=False) 
     hebrew_month = db.Column(db.Integer, nullable=False) 
     hebrew_day = db.Column(db.Integer, nullable=False)
+    family_id = db.Column(db.Integer, db.ForeignKey('family.id'), nullable=False)
     comments = db.relationship('Comment', backref='post', lazy=True)
     milestones = db.relationship('Milestone', backref='post', lazy=True, cascade="all, delete-orphan")  # New relationship
 
@@ -58,6 +59,16 @@ class Comment(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+
+class Family(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False, unique=True)
+    members = db.relationship('Post', backref='family', lazy=True)
+
+    def __repr__(self):
+        return f'<Family {self.name}>'
+
+
 
     def __repr__(self):
         return '<Comment {}>'.format(self.body)

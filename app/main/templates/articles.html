@@ -4,23 +4,15 @@
 
 {% block content %}
 <h1>Articles</h1>
-{% if posts %}
-<ul>
-    {% for post in posts %}
-    <li>
-        <a href="{{ url_for('main.article', post_id=post.id) }}">
-            {% if post.milestones %}
-                {% set first_milestone = post.milestones[0] %}
-                {% if first_milestone.image_path %}
-                    <img src="{{ url_for('static', filename=first_milestone.image_path) }}" alt="{{ first_milestone.title }}" style="max-width: 100px; max-height: 100px;">
-                {% endif %}
-            {% endif %}
-            {{ post.title }}
-        </a>
-    </li>
-    {% endfor %}
-</ul>
-{% else %}
-<p>No articles found.</p>
-{% endif %}
+
+{% for family in families %}
+<h2>{{ family.name }}</h2>
+{% for post in family.members %}
+<div class="article">
+    <h3><a href="{{ url_for('main.article', post_id=post.id) }}">{{ post.title }}</a></h3>
+    <p>{{ post.content }}</p>
+</div>
+{% endfor %}
+{% endfor %}
+
 {% endblock %}

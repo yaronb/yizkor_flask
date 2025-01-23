@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, FileField, TextAreaField, DateField, PasswordField, BooleanField, SubmitField, FieldList, FormField
-from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
+from wtforms import StringField, FileField, TextAreaField, DateField, PasswordField, BooleanField, SubmitField, FieldList, FormField, SelectField
+from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Optional
 from app.models import User
 
 class MilestoneForm(FlaskForm): 
@@ -11,6 +11,8 @@ class MilestoneForm(FlaskForm):
 class ArticleForm(FlaskForm):
    title = StringField('Title', validators=[DataRequired()]) 
    gregorian_death_date = DateField('Gregorian Death Date', format='%Y-%m-%d', validators=[DataRequired()]) 
+   family_id = SelectField('Family', coerce=int, validators=[Optional()])
+   new_family_name = StringField('New Family Name', validators=[Optional()])
    milestones = FieldList(FormField(MilestoneForm), min_entries=1, max_entries=10) 
    submit = SubmitField('Publish')
 

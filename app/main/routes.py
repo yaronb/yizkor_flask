@@ -3,7 +3,7 @@ from werkzeug.utils import secure_filename
 from flask import current_app, Blueprint, render_template, redirect, url_for, flash, request 
 from flask_login import current_user, login_required # Add this import 
 from app import db 
-from app.models import Post, Milestone 
+from app.models import Post, Milestone, Family 
 from app.auth.forms import ArticleForm
 from app.utils import gregorian_to_hebrew
 
@@ -31,15 +31,15 @@ def article(post_id):
     post = Post.query.get_or_404(post_id) 
     return render_template('article.html', post=post)    
     
-@main.route('/articles') 
-def articles(): 
-    try: 
-        posts = Post.query.order_by(Post.publication_date.desc()).all()  # Correctly call all()
-        print(f"Fetched Posts: {posts}")
-        return render_template('articles.html', posts=posts)  # Correctly pass posts
-    except Exception as e: 
-        print(f"Error rendering template: {e}") 
-        return str(e) 
+@main.route('/articles')
+def articles():
+    try:
+        families = Family.query.all()  # Fetch all families
+        return render_template('articles.html', families=families)  # Pass families to the template
+    except Exception as e:
+        print(f"Error rendering template: {e}")
+        return str(e)
+
 
     
 @main.route('/create_article', methods=['GET', 'POST'])
@@ -50,7 +50,19 @@ def create_article():
         return redirect(url_for('main.index'))
 
     form = ArticleForm()
+    form.family_id.choices = [(0, 'Select an existing family')] + [(family.id, family.name) for family in Family.query.all()]
+    
     if form.validate_on_submit():
+        if form.new_family_name.data:
+            # Add a new family if provided
+            new_family = Family(name=form.new_family_name.data)
+            db.session.add(new_family)
+            db.session.commit()
+            family_id = new_family.id
+        else:
+            # Use the selected family
+            family_id = form.family_id.data
+
         gregorian_death_date = form.gregorian_death_date.data
         hebrew_year, hebrew_month, hebrew_day = gregorian_to_hebrew(gregorian_death_date)
         
@@ -60,6 +72,7 @@ def create_article():
             hebrew_year=hebrew_year,
             hebrew_month=hebrew_month,
             hebrew_day=hebrew_day,
+            family_id=family_id,
             author=current_user
         )
         

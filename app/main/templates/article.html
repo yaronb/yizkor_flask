@@ -1,24 +1,40 @@
 {% extends "layout.html" %}
 
-{% block title %}Article{% endblock %}
+{% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
-<article>
-    <h1>{{ post.title }}</h1>
-    <p class="author-date">By {{ post.author.username }} on {{ post.publication_date.strftime('%B %d, %Y') }}</p>
-    {% for milestone in post.milestones %}
-    <section>
-        <h2>{{ milestone.title }}</h2>
-        <p>{{ milestone.content }}</p>
-        {% if milestone.image_path %}
-        <img src="{{ url_for('static', filename=milestone.image_path) }}" alt="{{ milestone.title }}" class="thumbnail" onclick="openModal('{{ url_for('static', filename=milestone.image_path) }}')">
-        {% endif %}
-    </section>
-    {% endfor %}
-    {% if current_user.is_authenticated and current_user == post.author %}
-    <a href="{{ url_for('main.edit_article', post_id=post.id) }}" class="btn btn-primary">Edit</a>
-    {% endif %}
-</article>
+<div class="container">
+    <div class="row">
+        <!-- Sidebar with Milestones -->
+        <div class="col-md-3">
+            <h3>Milestones</h3>
+            <ul>
+                {% for milestone in post.milestones %}
+                <li><a href="#milestone-{{ milestone.id }}">{{ milestone.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <!-- Main Content Area -->
+        <div class="col-md-9">
+            <article>
+                <h1>{{ post.title }}</h1>
+                <p class="author-date">By {{ post.author.username }} on {{ post.publication_date.strftime('%B %d, %Y') }}</p>
+                {% for milestone in post.milestones %}
+                <section id="milestone-{{ milestone.id }}">
+                    <h2>{{ milestone.title }}</h2>
+                    <p>{{ milestone.content }}</p>
+                    {% if milestone.image_path %}
+                    <img src="{{ url_for('static', filename=milestone.image_path) }}" alt="{{ milestone.title }}" class="thumbnail" onclick="openModal('{{ url_for('static', filename=milestone.image_path) }}')">
+                    {% endif %}
+                </section>
+                {% endfor %}
+                {% if current_user.is_authenticated and current_user == post.author %}
+                <a href="{{ url_for('main.edit_article', post_id=post.id) }}" class="btn btn-primary">Edit</a>
+                {% endif %}
+            </article>
+        </div>
+    </div>
+</div>
 
 <!-- The Modal -->
 <div id="myModal" class="modal">

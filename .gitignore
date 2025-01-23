@@ -1,3 +1,6 @@
+# Ignore the database file
+app.db
+
 # Ignore Python cache directories
 __pycache__/
 *.py[cod]

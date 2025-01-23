@@ -10,14 +10,23 @@
         {{ form.title.label }}
         {{ form.title(class="form-control") }}
     </div>
-    <div class="form-group"> 
-        {{ form.gregorian_death_date.label }} 
-        {{ form.gregorian_death_date(class="form-control") }} 
+    <div class="form-group">
+        {{ form.gregorian_death_date.label }}
+        {{ form.gregorian_death_date(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.family_id.label }}
+        {{ form.family_id(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.new_family_name.label }}
+        {{ form.new_family_name(class="form-control") }}
     </div>
     <div id="milestones">
+        <!-- Existing milestones will be displayed here -->
         {% for milestone in form.milestones %}
         <div class="form-group">
-            {{ milestone.title.label }}
+            <label>Milestone Title</label>
             {{ milestone.title(class="form-control") }}
         </div>
         <div class="form-group">
@@ -30,31 +39,10 @@
         </div>
         {% endfor %}
     </div>
-    <button type="button" onclick="addMilestone()">Add Milestone</button>
+    <button type="button" class="btn btn-secondary" onclick="addMilestone()">Add Milestone</button>
+    <button type="button" class="btn btn-secondary" onclick="window.history.back()">Cancel</button>
     <div class="form-group">
         {{ form.submit(class="btn btn-primary") }}
-        <a href="{{ url_for('main.article', post_id=post.id) }}" class="btn btn-secondary">Cancel</a> <!-- Add Cancel button -->
     </div>
 </form>
-
-<script>
-function addMilestone() {
-    var container = document.getElementById("milestones");
-    var num = container.children.length / 3; // Number of milestones currently
-    var newMilestone = `
-        <div class="form-group">
-            <label for="milestones-${num}-title">Name of Milestone</label>
-            <input type="text" name="milestones-${num}-title" id="milestones-${num}-title" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label for="milestones-${num}-content">Content</label>
-            <textarea name="milestones-${num}-content" id="milestones-${num}-content" class="form-control" rows="5" required></textarea>
-        </div>
-        <div class="form-group">
-            <label for="milestones-${num}-image">Image</label>
-            <input type="file" name="milestones-${num}-image" id="milestones-${num}-image" class="form-control-file">
-        </div>`;
-    container.insertAdjacentHTML('beforeend', newMilestone);
-}
-</script>
 {% endblock %}

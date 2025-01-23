@@ -99,61 +99,75 @@ def create_article():
     
     return render_template('create_article.html', form=form)
 
-@main.route('/edit_article/<int:post_id>', methods=['GET', 'POST']) 
-@login_required 
-def edit_article(post_id): 
-    post = Post.query.get_or_404(post_id) 
-    if current_user.role != 'author' or post.author != current_user: 
-        flash('You do not have permission to edit this article.', 'danger') 
-        return redirect(url_for('main.index')) 
+@main.route('/edit_article/<int:post_id>', methods=['GET', 'POST'])
+@login_required
+def edit_article(post_id):
+    post = Post.query.get_or_404(post_id)
+    if current_user.role != 'author' or post.author != current_user:
+        flash('You do not have permission to edit this article.', 'danger')
+        return redirect(url_for('main.index'))
+
+    form = ArticleForm()
+    form.family_id.choices = [(0, 'Select an existing family')] + [(family.id, family.name) for family in Family.query.all()]
     
-    form = ArticleForm() 
-    if form.validate_on_submit(): 
-        post.title = form.title.data 
-        post.gregorian_death_date = form.gregorian_death_date.data 
-        hebrew_year, hebrew_month, hebrew_day = gregorian_to_hebrew(post.gregorian_death_date) 
-        post.hebrew_year = hebrew_year 
-        post.hebrew_month = hebrew_month 
-        post.hebrew_day = hebrew_day 
-        
-        db.session.commit() 
-        
-        for milestone_form in form.milestones.data: 
-            milestone = Milestone.query.filter_by(post_id=post.id, title=milestone_form['title']).first() 
-            if milestone: 
-                milestone.content = milestone_form['content'] 
-                if milestone_form['image']: 
-                    filename = secure_filename(milestone_form['image'].filename) 
-                    image_path = os.path.join(current_app.root_path, 'static/images', filename) 
-                    milestone_form['image'].save(image_path) 
-                    milestone.image_path = 'images/' + filename 
-                else: 
-                    new_milestone = Milestone( 
-                        title=milestone_form['title'], 
-                        content=milestone_form['content'], 
-                        post=post 
-                    ) 
-                    if milestone_form['image']: 
-                        filename = secure_filename(milestone_form['image'].filename) 
-                        image_path = os.path.join(current_app.root_path, 'static/images', filename) 
-                        milestone_form['image'].save(image_path) 
-                        new_milestone.image_path = 'images/' + filename 
-                    db.session.add(new_milestone) 
-                    
-            db.session.commit() 
-            flash('Your article has been updated!', 'success') 
-            return redirect(url_for('main.article', post_id=post.id)) 
-    elif request.method == 'GET': 
-        form.title.data = post.title 
-        form.gregorian_death_date.data = post.gregorian_death_date 
-        milestones = Milestone.query.filter_by(post_id=post.id).all() 
-        for milestone in milestones: 
-            form.milestones.append_entry({ 
-                'title': milestone.title, 
-                'content': milestone.content, 
-                'image': None 
-            }) 
-            
+    if form.validate_on_submit():
+        if form.new_family_name.data:
+            # Add a new family if provided
+            new_family = Family(name=form.new_family_name.data)
+            db.session.add(new_family)
+            db.session.commit()
+            post.family_id = new_family.id
+        else:
+            # Use the selected family
+            post.family_id = form.family_id.data
+
+        post.title = form.title.data
+        post.gregorian_death_date = form.gregorian_death_date.data
+        hebrew_year, hebrew_month, hebrew_day = gregorian_to_hebrew(post.gregorian_death_date)
+        post.hebrew_year = hebrew_year
+        post.hebrew_month = hebrew_month
+        post.hebrew_day = hebrew_day
+
+        db.session.commit()
+
+        for milestone_form in form.milestones.data:
+            milestone = Milestone.query.filter_by(post_id=post.id, title=milestone_form['title']).first()
+            if milestone:
+                milestone.content = milestone_form['content']
+                if milestone_form['image']:
+                    filename = secure_filename(milestone_form['image'].filename)
+                    image_path = os.path.join(current_app.root_path, 'static/images', filename)
+                    milestone_form['image'].save(image_path)
+                    milestone.image_path = 'images/' + filename
+            else:
+                new_milestone = Milestone(
+                    title=milestone_form['title'],
+                    content=milestone_form['content'],
+                    post=post
+                )
+                if milestone_form['image']:
+                    filename = secure_filename(milestone_form['image'].filename)
+                    image_path = os.path.join(current_app.root_path, 'static/images', filename)
+                    milestone_form['image'].save(image_path)
+                    new_milestone.image_path = 'images/' + filename
+                db.session.add(new_milestone)
+
+        db.session.commit()
+        flash('Your article has been updated!', 'success')
+        return redirect(url_for('main.article', post_id=post.id))
+    elif request.method == 'GET':
+        form.title.data = post.title
+        form.gregorian_death_date.data = post.gregorian_death_date
+        if post.family:
+            form.family_id.data = post.family.id
+        milestones = Milestone.query.filter_by(post_id=post.id).all()
+        for milestone in milestones:
+            form.milestones.append_entry({
+                'title': milestone.title,
+                'content': milestone.content,
+                'image': None
+            })
+
     return render_template('edit_article.html', form=form, post=post)
 
 @main.route('/about') 

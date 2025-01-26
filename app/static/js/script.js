@@ -1,3 +1,16 @@
+// Close the dropdown menu if the user clicks outside of it
+window.onclick = function(event) {
+    if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.style.display === "block") {
+                openDropdown.style.display = "none";
+            }
+        }
+    }
+}
+
 function addMilestone() {
     var container = document.getElementById("milestones");
     var num = container.children.length; // Number of milestones currently
@@ -88,4 +101,16 @@ function getDragAfterElement(y) {
             return closest;
         }
     }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+function openModal(imageSrc) {
+    var modal = document.getElementById("myModal");
+    var modalImage = document.getElementById("modalImage");
+    modal.style.display = "block";
+    modalImage.src = imageSrc;
+}
+
+function closeModal() {
+    var modal = document.getElementById("myModal");
+    modal.style.display = "none";
 }

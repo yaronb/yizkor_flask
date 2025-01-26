@@ -47,7 +47,7 @@ class Milestone(db.Model):
     title = db.Column(db.String(140), nullable=False)
     content = db.Column(db.Text, nullable=False)
     image_path = db.Column(db.String(120))
-    order = db.Column(db.Integer, nullable=False, default=0) 
+    order = db.Column(db.Integer, nullable=False, default=0)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
     
     def __repr__(self):

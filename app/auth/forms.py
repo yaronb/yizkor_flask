@@ -4,8 +4,8 @@ from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Op
 from app.models import User
 
 class MilestoneForm(FlaskForm): 
-    title = StringField('Name of Milestone', validators=[Optional()]) 
-    content = TextAreaField('Content', validators=[Optional()]) 
+    title = StringField('Name of Milestone', validators=[DataRequired()]) 
+    content = TextAreaField('Content', validators=[DataRequired()]) 
     image = FileField('Image') 
     order = HiddenField('Order')
 

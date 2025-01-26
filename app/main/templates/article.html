@@ -12,10 +12,12 @@
                 {% for milestone in post.milestones %}
                 <li><a href="#milestone-{{ milestone.id }}">{{ milestone.title }}</a></li>
                 {% endfor %}
-                {% if current_user.is_authenticated and current_user == post.author %}
                 <hr>
-                <li><a href="{{ url_for('main.edit_article', post_id=post.id) }}">Edit</a></li>
-                {% endif %}
+                <li>
+                    {% if current_user.is_authenticated and current_user == post.author %}
+                    <a href="{{ url_for('main.edit_article', post_id=post.id) }}">Edit</a>
+                    {% endif %}
+                </li>
             </ul>
         </div>
         <!-- Main Content Area -->
@@ -26,7 +28,7 @@
                 {% for milestone in post.milestones %}
                 <section id="milestone-{{ milestone.id }}">
                     <h2>{{ milestone.title }}</h2>
-                    <p>{{ milestone.content | replace(".", ".<br>") | safe }}</p>
+                    <p>{{ milestone.content }}</p>
                     {% if milestone.image_path %}
                     <img src="{{ url_for('static', filename=milestone.image_path) }}" alt="{{ milestone.title }}" class="thumbnail" onclick="openModal('{{ url_for('static', filename=milestone.image_path) }}')">
                     {% endif %}
@@ -43,17 +45,4 @@
   <img class="modal-content" id="modalImage">
 </div>
 
-<script>
-function openModal(imageSrc) {
-    var modal = document.getElementById("myModal");
-    var modalImage = document.getElementById("modalImage");
-    modal.style.display = "block";
-    modalImage.src = imageSrc;
-}
-
-function closeModal() {
-    var modal = document.getElementById("myModal");
-    modal.style.display = "none";
-}
-</script>
 {% endblock %}

@@ -175,9 +175,6 @@ def edit_article(post_id):
     return render_template('edit_article.html', form=form, post=post)
 
 
-
-
-
 @main.route('/about') 
 def about(): 
     try: 

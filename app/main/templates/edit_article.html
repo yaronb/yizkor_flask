@@ -25,17 +25,18 @@
     <div id="milestones">
         <!-- Existing milestones will be displayed here -->
         {% for milestone in form.milestones %}
-        <div class="form-group">
+        <div class="form-group milestone-item" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondrop="drop(event)">
+            {{ milestone.order(class="form-control milestone-order", type="hidden") }}
             <label>Milestone Title</label>
             {{ milestone.title(class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ milestone.content.label }}
-            {{ milestone.content(class="form-control", rows=5) }}
-        </div>
-        <div class="form-group">
-            {{ milestone.image.label }}
-            {{ milestone.image(class="form-control-file") }}
+            <div class="form-group">
+                {{ milestone.content.label }}
+                {{ milestone.content(class="form-control", rows=5) }}
+            </div>
+            <div class="form-group">
+                {{ milestone.image.label }}
+                {{ milestone.image(class="form-control-file") }}
+            </div>
         </div>
         {% endfor %}
     </div>
@@ -45,4 +46,7 @@
         {{ form.submit(class="btn btn-primary") }}
     </div>
 </form>
+
+<!-- Include the external JavaScript file -->
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 {% endblock %}

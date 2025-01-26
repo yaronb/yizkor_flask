@@ -131,26 +131,29 @@ def edit_article(post_id):
         db.session.commit()
 
         for milestone_form in form.milestones.data:
-            milestone = Milestone.query.filter_by(post_id=post.id, title=milestone_form['title']).first()
-            if milestone:
-                milestone.content = milestone_form['content']
-                if milestone_form['image']:
-                    filename = secure_filename(milestone_form['image'].filename)
-                    image_path = os.path.join(current_app.root_path, 'static/images', filename)
-                    milestone_form['image'].save(image_path)
-                    milestone.image_path = 'images/' + filename
-            else:
-                new_milestone = Milestone(
-                    title=milestone_form['title'],
-                    content=milestone_form['content'],
-                    post=post
-                )
-                if milestone_form['image']:
-                    filename = secure_filename(milestone_form['image'].filename)
-                    image_path = os.path.join(current_app.root_path, 'static/images', filename)
-                    milestone_form['image'].save(image_path)
-                    new_milestone.image_path = 'images/' + filename
-                db.session.add(new_milestone)
+            if milestone_form['title'] and milestone_form['content']:
+                milestone = Milestone.query.filter_by(post_id=post.id, title=milestone_form['title']).first()
+                if milestone:
+                    milestone.content = milestone_form['content']
+                    milestone.order = milestone_form['order']  # Update order
+                    if milestone_form['image']:
+                        filename = secure_filename(milestone_form['image'].filename)
+                        image_path = os.path.join(current_app.root_path, 'static/images', filename)
+                        milestone_form['image'].save(image_path)
+                        milestone.image_path = 'images/' + filename
+                else:
+                    new_milestone = Milestone(
+                        title=milestone_form['title'],
+                        content=milestone_form['content'],
+                        post=post,
+                        order=milestone_form['order']  # Set order for new milestone
+                    )
+                    if milestone_form['image']:
+                        filename = secure_filename(milestone_form['image'].filename)
+                        image_path = os.path.join(current_app.root_path, 'static/images', filename)
+                        milestone_form['image'].save(image_path)
+                        new_milestone.image_path = 'images/' + filename
+                    db.session.add(new_milestone)
 
         db.session.commit()
         flash('Your article has been updated!', 'success')
@@ -160,15 +163,20 @@ def edit_article(post_id):
         form.gregorian_death_date.data = post.gregorian_death_date
         if post.family:
             form.family_id.data = post.family.id
-        milestones = Milestone.query.filter_by(post_id=post.id).all()
+        milestones = Milestone.query.filter_by(post_id=post.id).order_by(Milestone.order).all()
         for milestone in milestones:
             form.milestones.append_entry({
                 'title': milestone.title,
                 'content': milestone.content,
-                'image': None
+                'image': None,
+                'order': milestone.order
             })
 
     return render_template('edit_article.html', form=form, post=post)
+
+
+
+
 
 @main.route('/about') 
 def about(): 

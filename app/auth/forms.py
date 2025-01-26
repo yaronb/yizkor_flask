@@ -1,12 +1,13 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, FileField, TextAreaField, DateField, PasswordField, BooleanField, SubmitField, FieldList, FormField, SelectField
+from wtforms import StringField, FileField, TextAreaField, DateField, PasswordField, BooleanField, SubmitField, FieldList, FormField, SelectField, HiddenField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Optional
 from app.models import User
 
 class MilestoneForm(FlaskForm): 
-    title = StringField('Name of Milestone', validators=[DataRequired()]) 
-    content = TextAreaField('Content', validators=[DataRequired()]) 
+    title = StringField('Name of Milestone', validators=[Optional()]) 
+    content = TextAreaField('Content', validators=[Optional()]) 
     image = FileField('Image') 
+    order = HiddenField('Order')
 
 class ArticleForm(FlaskForm):
    title = StringField('Title', validators=[DataRequired()]) 

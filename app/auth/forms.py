@@ -40,3 +40,20 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
             raise ValidationError('Please use a different email address.')
+        
+
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField, SelectField, HiddenField
+from wtforms.validators import DataRequired, Email, EqualTo, Length
+
+class ChangePasswordForm(FlaskForm):
+    current_password = PasswordField('Current Password', validators=[DataRequired()])
+    new_password = PasswordField('New Password', validators=[DataRequired(), Length(min=6)])
+    confirm_new_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('new_password')])
+    submit = SubmitField('Change Password')
+
+class AssignFamilyForm(FlaskForm):
+    user_id = HiddenField('User ID', validators=[DataRequired()])
+    family_id = SelectField('Family', coerce=int, validators=[DataRequired()])
+    submit = SubmitField('Assign Family')
+

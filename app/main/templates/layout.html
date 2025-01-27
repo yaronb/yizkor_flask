@@ -12,6 +12,13 @@
 <body>
     <header>
         <img src="{{ url_for('static', filename='images/candlelogo.png') }}" alt="Yizkor Logo" style="width:75px; height:auto;">
+        {% if current_user.is_authenticated %}
+        <span class="navbar-text">
+            <a class="navbar-text" href="{{ url_for('main.user') }}">
+                Welcome, {{ current_user.username }}
+            </a>
+        </span>
+        {% endif %}
         <nav>
             <ul>
                 <li><a href="{{ url_for('main.index') }}">Home</a></li>

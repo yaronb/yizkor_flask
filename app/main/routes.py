@@ -3,8 +3,8 @@ from werkzeug.utils import secure_filename
 from flask import current_app, Blueprint, render_template, redirect, url_for, flash, request 
 from flask_login import current_user, login_required # Add this import 
 from app import db 
-from app.models import Post, Milestone, Family 
-from app.auth.forms import ArticleForm
+from app.models import Post, Milestone, Family, User 
+from app.auth.forms import ArticleForm, ChangePasswordForm, AssignFamilyForm
 from app.utils import gregorian_to_hebrew
 
 main = Blueprint('main', __name__, template_folder='templates')
@@ -174,6 +174,61 @@ def edit_article(post_id):
 
     return render_template('edit_article.html', form=form, post=post)
 
+@main.route('/users', methods=['GET', 'POST'])
+@login_required
+def users():
+    users = User.query.all()
+    families = Family.query.all()
+    form = AssignFamilyForm()
+    if form.validate_on_submit():
+        user_id = form.user_id.data
+        family_id = form.family_id.data
+        user = User.query.get(user_id)
+        family = Family.query.get(family_id)
+        user.families.append(family)
+        db.session.commit()
+        flash(f'Assigned family {family.name} to user {user.username}.', 'success')
+        return redirect(url_for('main.users'))
+    return render_template('users.html', users=users, families=families, form=form)
+
+@main.route('/user', methods=['GET', 'POST'])
+@login_required
+def user():
+    user = current_user
+    families = Family.query.all()
+    assign_family_form = AssignFamilyForm()
+    change_password_form = ChangePasswordForm()
+
+    # Populate the family choices for the assign_family_form
+    assign_family_form.family_id.choices = [(family.id, family.name) for family in families]
+
+    # Set the user_id in the form
+    assign_family_form.user_id.data = user.id
+
+    if request.method == 'POST':
+        print("Form Submitted:", request.form)
+
+    if assign_family_form.validate_on_submit() and 'assign_family' in request.form:
+        family_id = assign_family_form.family_id.data
+        family = Family.query.get(family_id)
+        user.families.append(family)
+        db.session.commit()
+        flash(f'Assigned family {family.name} to you.', 'success')
+        return redirect(url_for('main.user'))
+
+    if change_password_form.validate_on_submit() and 'change_password' in request.form:
+        if user.check_password(change_password_form.current_password.data):
+            user.set_password(change_password_form.new_password.data)
+            db.session.commit()
+            flash('Your password has been changed.', 'success')
+            return redirect(url_for('main.user'))
+        else:
+            flash('Current password is incorrect.', 'danger')
+
+    return render_template('user.html', user=user, families=families, assign_family_form=assign_family_form, change_password_form=change_password_form)
+
+
+
 
 @main.route('/about') 
 def about(): 
@@ -190,5 +245,19 @@ def contact():
     except Exception as e: 
         print(f"Error rendering template: {e}") 
         return str(e)
-
-
+    
+@main.route('/change_password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    form = ChangePasswordForm()
+    if form.validate_on_submit():
+        user = current_user
+        if user.check_password(form.current_password.data):
+            user.set_password(form.new_password.data)
+            db.session.commit()
+            flash('Your password has been changed.', 'success')
+            return redirect(url_for('main.index'))
+        else:
+            flash('Current password is incorrect.', 'danger')
+    return render_template('change_password.html', form=form)
+    

@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block content %}
+<h1>User Profile</h1>
+<h2>Welcome, {{ user.username }}</h2>
+
+<h4>Assigned Families</h4>
+<ul>
+    {% for family in user.families %}
+    <li>{{ family.name }}</li>
+    {% endfor %}
+</ul>
+
+<!-- Form for Assigning Family Members -->
+<h4>Assign Family Member</h4>
+<form method="POST" action="{{ url_for('main.user') }}">
+    {{ assign_family_form.hidden_tag() }}
+    <div class="form-group">
+        <label for="family_id">Family</label>
+        {{ assign_family_form.family_id(class="form-control") }}
+    </div>
+    <button type="submit" class="btn btn-primary" name="assign_family">Assign Family</button>
+</form>
+
+<!-- Form for Changing Password -->
+<h4>Change Password</h4>
+<form method="POST" action="{{ url_for('main.user') }}">
+    {{ change_password_form.hidden_tag() }}
+    <div class="form-group">
+        {{ change_password_form.current_password.label }}
+        {{ change_password_form.current_password(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ change_password_form.new_password.label }}
+        {{ change_password_form.new_password(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ change_password_form.confirm_new_password.label }}
+        {{ change_password_form.confirm_new_password(class="form-control") }}
+    </div>
+    <button type="submit" class="btn btn-primary" name="change_password">Change Password</button>
+</form>
+{% endblock %}

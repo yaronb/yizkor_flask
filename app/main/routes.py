@@ -228,6 +228,14 @@ def user():
     return render_template('user.html', user=user, families=families, assign_family_form=assign_family_form, change_password_form=change_password_form)
 
 
+@main.route('/search', methods=['GET'])
+def search():
+    query = request.args.get('query')
+    if query:
+        results = Post.query.filter(Post.title.contains(query)).all()  # Example search on Post titles
+    else:
+        results = []
+    return render_template('search_results.html', query=query, results=results)
 
 
 @main.route('/about') 

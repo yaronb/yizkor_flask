@@ -6,11 +6,11 @@
 <h1>מאמרים</h1>
 
 {% for family in families %}
-<h2>{{ family.name }}</h2>
+<h2>{{ family.name_he }}</h2>
 {% for post in family.members %}
 <div class="article">
-    <h5><a href="{{ url_for('main.article', post_id=post.id) }}">{{ post.title }}</a></h5>
-    <p>{{ post.content }}</p>
+    <h5><a href="{{ url_for('main.article_he', post_id=post.id) }}">{{ post.title_he }}</a></h5>
+    <p>{{ post.content_he }}</p>
 </div>
 {% endfor %}
 {% endfor %}

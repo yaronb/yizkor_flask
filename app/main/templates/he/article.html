@@ -1,21 +1,21 @@
 {% extends "he/layout.html" %}
 
-{% block title %}{{ post.title }}{% endblock %}
+{% block title %}{{ post.title_he }}{% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="row">
         <!-- Sidebar with Milestones -->
         <div class="col-md-3">
-            <h3>Milestones</h3>
+            <h3>אבן דרך</h3>
             <ul>
                 {% for milestone in post.milestones %}
-                <li><a href="#milestone-{{ milestone.id }}">{{ milestone.title }}</a></li>
+                <li><a href="#milestone-{{ milestone.id }}">{{ milestone.title_he }}</a></li>
                 {% endfor %}
                 <hr>
                 <li>
                     {% if current_user.is_authenticated and current_user == post.author %}
-                    <a href="{{ url_for('main.edit_article', post_id=post.id) }}">Edit</a>
+                    <a href="{{ url_for('main.edit_article_he', post_id=post.id) }}">לַעֲרוֹך</a>
                     {% endif %}
                 </li>
             </ul>
@@ -23,14 +23,14 @@
         <!-- Main Content Area -->
         <div class="col-md-9">
             <article>
-                <h1>{{ post.title }}</h1>
+                <h1>{{ post.title_he }}</h1>
                 <p class="author-date">By {{ post.author.username }} on {{ post.publication_date.strftime('%B %d, %Y') }}</p>
                 {% for milestone in post.milestones %}
                 <section id="milestone-{{ milestone.id }}">
-                    <h2>{{ milestone.title }}</h2>
-                    <p>{{ milestone.content }}</p>
+                    <h2>{{ milestone.title_he }}</h2>
+                    <p>{{ milestone.content_he }}</p>
                     {% if milestone.image_path %}
-                    <img src="{{ url_for('static', filename=milestone.image_path) }}" alt="{{ milestone.title }}" class="thumbnail" onclick="openModal('{{ url_for('static', filename=milestone.image_path) }}')">
+                    <img src="{{ url_for('static', filename=milestone.image_path) }}" alt="{{ milestone.title_he }}" class="thumbnail" onclick="openModal('{{ url_for('static', filename=milestone.image_path) }}')">
                     {% endif %}
                 </section>
                 {% endfor %}

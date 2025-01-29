@@ -309,7 +309,7 @@ def create_article():
         return redirect(url_for('main.index_he'))
 
     form = ArticleForm()
-    form.family_id.choices = [(0, 'Select an existing family')] + [(family.id, family.name) for family in Family.query.all()]
+    form.family_id.choices = [(0, 'בחר משפחה קיימת')] + [(family.id, family.name_he) for family in Family.query.all()]
     
     if form.validate_on_submit():
         if form.new_family_name.data:
@@ -360,19 +360,19 @@ def create_article():
 
 @main.route('/he/edit_article/<int:post_id>', methods=['GET', 'POST'], endpoint='edit_article_he')
 @login_required
-def edit_article(post_id):
+def edit_article_he(post_id):
     post = Post.query.get_or_404(post_id)
     if current_user.role != 'author' or post.author != current_user:
-        flash('You do not have permission to edit this article.', 'danger')
+        flash('אין לך הרשאה לערוך מאמר זה.', 'סַכָּנָה')
         return redirect(url_for('main.index'))
 
     form = ArticleForm()
-    form.family_id.choices = [(0, 'Select an existing family')] + [(family.id, family.name) for family in Family.query.all()]
+    form.family_id.choices = [(0, 'בחר משפחה קיימת')] + [(family.id, family.name_he) for family in Family.query.all()]
     
     if form.validate_on_submit():
-        if form.new_family_name.data:
+        if form.new_family_name_he.data:
             # Add a new family if provided
-            new_family = Family(name=form.new_family_name.data)
+            new_family = Family(name=form.new_family_name_he.data)
             db.session.add(new_family)
             db.session.commit()
             post.family_id = new_family.id
@@ -380,7 +380,7 @@ def edit_article(post_id):
             # Use the selected family
             post.family_id = form.family_id.data
 
-        post.title = form.title.data
+        post.title_he = form.title_he.data
         post.gregorian_death_date = form.gregorian_death_date.data
         hebrew_year, hebrew_month, hebrew_day = gregorian_to_hebrew(post.gregorian_death_date)
         post.hebrew_year = hebrew_year
@@ -391,9 +391,9 @@ def edit_article(post_id):
 
         for milestone_form in form.milestones.data:
             if milestone_form['title'] and milestone_form['content']:
-                milestone = Milestone.query.filter_by(post_id=post.id, title=milestone_form['title']).first()
+                milestone = Milestone.query.filter_by(post_id=post.id, title_he=milestone_form['title_he']).first()
                 if milestone:
-                    milestone.content = milestone_form['content']
+                    milestone.content_he = milestone_form['content_he']
                     milestone.order = milestone_form['order']  # Update order
                     if milestone_form['image']:
                         filename = secure_filename(milestone_form['image'].filename)
@@ -402,8 +402,8 @@ def edit_article(post_id):
                         milestone.image_path = 'images/' + filename
                 else:
                     new_milestone = Milestone(
-                        title=milestone_form['title'],
-                        content=milestone_form['content'],
+                        title_he=milestone_form['title_he'],
+                        content_he=milestone_form['content_he'],
                         post=post,
                         order=milestone_form['order']  # Set order for new milestone
                     )
@@ -415,18 +415,18 @@ def edit_article(post_id):
                     db.session.add(new_milestone)
 
         db.session.commit()
-        flash('Your article has been updated!', 'success')
+        flash('המאמר שלך עודכן!', 'הַצלָחָה')
         return redirect(url_for('main.article', post_id=post.id))
     elif request.method == 'GET':
-        form.title.data = post.title
+        form.title_he.data = post.title_he
         form.gregorian_death_date.data = post.gregorian_death_date
         if post.family:
             form.family_id.data = post.family.id
         milestones = Milestone.query.filter_by(post_id=post.id).order_by(Milestone.order).all()
         for milestone in milestones:
             form.milestones.append_entry({
-                'title': milestone.title,
-                'content': milestone.content,
+                'title_he': milestone.title_he,
+                'content_he': milestone.content_he,
                 'image': None,
                 'order': milestone.order
             })
@@ -446,7 +446,7 @@ def users():
         family = Family.query.get(family_id)
         user.families.append(family)
         db.session.commit()
-        flash(f'Assigned family {family.name} to user {user.username}.', 'success')
+        flash(f'משפחה שהוקצתה {family.name} למשתמש {user.username}.', 'הַצלָחָה')
         return redirect(url_for('main.users'))
     return render_template('he/users.html', users=users, families=families, form=form)
 
@@ -459,7 +459,7 @@ def user():
     change_password_form = ChangePasswordForm()
 
     # Populate the family choices for the assign_family_form
-    assign_family_form.family_ids.choices = [(family.id, family.name) for family in families]
+    assign_family_form.family_ids.choices = [(family.id, family.name_he) for family in families]
 
     # Set the user_id in the form
     assign_family_form.user_id.data = user.id
@@ -471,17 +471,17 @@ def user():
             if family not in user.families:
                 user.families.append(family)
         db.session.commit()
-        flash(f'Assigned selected families to you.', 'success')
+        flash(f'הקצה לך משפחות נבחרות.', 'הַצלָחָה')
         return redirect(url_for('main.user'))
 
     if change_password_form.validate_on_submit() and 'change_password' in request.form:
         if user.check_password(change_password_form.current_password.data):
             user.set_password(change_password_form.new_password.data)
             db.session.commit()
-            flash('Your password has been changed.', 'success')
+            flash('הסיסמה שלך שונתה.', 'הַצלָחָה')
             return redirect(url_for('main.user'))
         else:
-            flash('Current password is incorrect.', 'danger')
+            flash('הסיסמה הנוכחית שגויה.', 'סַכָּנָה')
 
     return render_template('he/user.html', user=user, families=families, assign_family_form=assign_family_form, change_password_form=change_password_form)
 
@@ -520,10 +520,10 @@ def change_password():
         if user.check_password(form.current_password.data):
             user.set_password(form.new_password.data)
             db.session.commit()
-            flash('Your password has been changed.', 'success')
+            flash('הסיסמה שלך שונתה.', 'הַצלָחָה')
             return redirect(url_for('main.index'))
         else:
-            flash('Current password is incorrect.', 'danger')
+            flash('הסיסמה הנוכחית שגויה.', 'סַכָּנָה')
     return render_template('he/change_password.html', form=form)
 
 

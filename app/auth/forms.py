@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, FileField, TextAreaField, DateField, PasswordField, BooleanField, SubmitField, FieldList, FormField, SelectField, HiddenField
-from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Optional
+from wtforms import StringField, FileField, FieldList, FormField, TextAreaField, DateField, PasswordField, BooleanField, SubmitField, SelectField, HiddenField, SelectMultipleField
+from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationError, Optional
 from app.models import User
 
 class MilestoneForm(FlaskForm): 
@@ -42,10 +42,6 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Please use a different email address.')
         
 
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectField, HiddenField
-from wtforms.validators import DataRequired, Email, EqualTo, Length
-
 class ChangePasswordForm(FlaskForm):
     current_password = PasswordField('Current Password', validators=[DataRequired()])
     new_password = PasswordField('New Password', validators=[DataRequired(), Length(min=6)])
@@ -54,6 +50,6 @@ class ChangePasswordForm(FlaskForm):
 
 class AssignFamilyForm(FlaskForm):
     user_id = HiddenField('User ID', validators=[DataRequired()])
-    family_id = SelectField('Family', coerce=int, validators=[DataRequired()])
+    family_ids = SelectMultipleField('Families', coerce=int, validators=[DataRequired()])
     submit = SubmitField('Assign Family')
 

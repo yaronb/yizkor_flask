@@ -195,25 +195,24 @@ def users():
 @login_required
 def user():
     user = current_user
-    families = Family.query.all()
+    families = Family.query.order_by(Family.name).all()
     assign_family_form = AssignFamilyForm()
     change_password_form = ChangePasswordForm()
 
     # Populate the family choices for the assign_family_form
-    assign_family_form.family_id.choices = [(family.id, family.name) for family in families]
+    assign_family_form.family_ids.choices = [(family.id, family.name) for family in families]
 
     # Set the user_id in the form
     assign_family_form.user_id.data = user.id
 
-    if request.method == 'POST':
-        print("Form Submitted:", request.form)
-
     if assign_family_form.validate_on_submit() and 'assign_family' in request.form:
-        family_id = assign_family_form.family_id.data
-        family = Family.query.get(family_id)
-        user.families.append(family)
+        family_ids = assign_family_form.family_ids.data
+        for family_id in family_ids:
+            family = Family.query.get(int(family_id))  # Ensure family_id is an integer
+            if family not in user.families:
+                user.families.append(family)
         db.session.commit()
-        flash(f'Assigned family {family.name} to you.', 'success')
+        flash(f'Assigned selected families to you.', 'success')
         return redirect(url_for('main.user'))
 
     if change_password_form.validate_on_submit() and 'change_password' in request.form:
@@ -226,6 +225,7 @@ def user():
             flash('Current password is incorrect.', 'danger')
 
     return render_template('user.html', user=user, families=families, assign_family_form=assign_family_form, change_password_form=change_password_form)
+
 
 
 @main.route('/search', methods=['GET'])

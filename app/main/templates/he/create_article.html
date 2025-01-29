@@ -1,9 +1,9 @@
 {% extends "he/layout.html" %}
 
-{% block title %}Create Article{% endblock %}
+{% block title %}צור מאמר{% endblock %}
 
 {% block content %}
-<h1>Create Article</h1>
+<h1>צור מאמר</h1>
 <form method="POST" action="{{ url_for('main.create_article') }}" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
     <div class="form-group">
@@ -38,7 +38,7 @@
         </div>
         {% endfor %}
     </div>
-    <button type="button" onclick="addMilestone()">Add Milestone</button>
+    <button type="button" onclick="addMilestone()">הוסף אבן דרך</button>
     <div class="form-group">
         {{ form.submit(class="btn btn-primary") }}
     </div>

@@ -1,9 +1,9 @@
 {% extends "he/layout.html" %}
 
-{% block title %}Edit Article{% endblock %}
+{% block title %}ערוך מאמר{% endblock %}
 
 {% block content %}
-<h1>Edit Article</h1>
+<h1>ערוך מאמר</h1>
 <form method="POST" action="{{ url_for('main.edit_article', post_id=post.id) }}" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
     <div class="form-group">
@@ -27,7 +27,7 @@
         {% for milestone in form.milestones %}
         <div class="form-group milestone-item" draggable="true" ondragstart="dragStart(event)" ondragover="dragOver(event)" ondrop="drop(event)">
             {{ milestone.order(class="form-control milestone-order", type="hidden") }}
-            <label>Milestone Title</label>
+            <label>כותרת אבן דרך</label>
             {{ milestone.title(class="form-control") }}
             <div class="form-group">
                 {{ milestone.content.label }}
@@ -40,8 +40,8 @@
         </div>
         {% endfor %}
     </div>
-    <button type="button" class="btn btn-secondary" onclick="addMilestone()">Add Milestone</button>
-    <button type="button" class="btn btn-secondary" onclick="window.history.back()">Cancel</button>
+    <button type="button" class="btn btn-secondary" onclick="addMilestone()">הוסף אבן דרך</button>
+    <button type="button" class="btn btn-secondary" onclick="window.history.back()">לְבַטֵל</button>
     <div class="form-group">
         {{ form.submit(class="btn btn-primary") }}
     </div>

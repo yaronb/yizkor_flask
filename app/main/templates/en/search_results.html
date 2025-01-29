@@ -1,0 +1,14 @@
+{% extends "en/layout.html" %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block content %}
+<h1>Search Results for "{{ query }}"</h1>
+<ul>
+    {% for result in results %}
+    <li><a href="{{ url_for('main.article', post_id=result.id) }}">{{ result.title }}</a></li>
+    {% else %}
+    <li>No results found.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

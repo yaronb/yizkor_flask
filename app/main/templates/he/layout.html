@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}יזכור{% endblock %}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/rtl_styles.css') }}">
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='images/candlelogo.png') }}" alt="לוגו יזכור" style="width:75px; height:auto;">
+        {% if current_user.is_authenticated %}
+        <span class="navbar-text">
+            <a class="navbar-text" href="{{ url_for('main.user_he') }}">
+                ברוך הבא, {{ current_user.username }}
+            </a>
+        </span>
+        {% endif %}
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('main.index_he') }}">דף הבית</a></li>
+                <li class="dropdown">
+                    <a href="{{ url_for('main.articles_he') }}">מאמרים</a>
+                    {% if current_user.is_authenticated and current_user.role == 'author' %}
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('main.create_article_he') }}">צור מאמר</a>
+                    </div>
+                    {% endif %}
+                </li>
+                <li><a href="{{ url_for('main.about_he') }}">אודות</a></li>
+                <li><a href="{{ url_for('main.contact_he') }}">צור קשר</a></li>
+                <li class="dropdown">
+                    <a href="#">התחבר/הרשם</a>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('auth.login_he') }}">התחבר</a>
+                        <a href="{{ url_for('auth.register_he') }}">הרשם</a>
+                    </div>
+                </li>
+                <!-- Language Dropdown -->
+                <li class="dropdown">
+                    <a href="#">שפה</a>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('main.index') }}">English</a>
+                        <a href="{{ url_for('main.index_he') }}">עברית</a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+        <div class="search-bar">
+            <form class="form-inline my-2 my-lg-0" method="GET" action="{{ url_for('main.search_he') }}">
+                <input class="form-control mr-sm-2" type="search" placeholder="חפש..." aria-label="Search" name="query">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">חפש</button>
+            </form>
+        </div>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <div class="contact">מידע ליצירת קשר</div>
+        <div class="social-media">
+            <a href="#">פייסבוק</a>
+            <a href="#">טוויטר</a>
+            <a href="#">אינסטגרם</a>
+        </div>
+        <div class="copyright">© 2025 האתר שלך</div>
+    </footer>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

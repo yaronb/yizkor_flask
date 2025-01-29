@@ -1,0 +1,67 @@
+{% extends "he/layout.html" %}
+
+{% block title %}Create Article{% endblock %}
+
+{% block content %}
+<h1>Create Article</h1>
+<form method="POST" action="{{ url_for('main.create_article') }}" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+        {{ form.title.label }}
+        {{ form.title(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.gregorian_death_date.label }}
+        {{ form.gregorian_death_date(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.family_id.label }}
+        {{ form.family_id(class="form-control") }}
+    </div>
+    <div class="form-group">
+        {{ form.new_family_name.label }}
+        {{ form.new_family_name(class="form-control") }}
+    </div>
+    <div id="milestones">
+        {% for milestone in form.milestones %}
+        <div class="form-group">
+            {{ milestone.title.label }}
+            {{ milestone.title(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ milestone.content.label }}
+            {{ milestone.content(class="form-control", rows=5) }}
+        </div>
+        <div class="form-group">
+            {{ milestone.image.label }}
+            {{ milestone.image(class="form-control-file") }}
+        </div>
+        {% endfor %}
+    </div>
+    <button type="button" onclick="addMilestone()">Add Milestone</button>
+    <div class="form-group">
+        {{ form.submit(class="btn btn-primary") }}
+    </div>
+</form>
+
+<script>
+function addMilestone() {
+    var container = document.getElementById("milestones");
+    var num = container.children.length / 3; // Number of milestones currently
+    var newMilestone = `
+        <div class="form-group">
+            <label for="milestones-${num}-title">Name of Milestone</label>
+            <input type="text" name="milestones-${num}-title" id="milestones-${num}-title" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="milestones-${num}-content">Content</label>
+            <textarea name="milestones-${num}-content" id="milestones-${num}-content" class="form-control" rows="5" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="milestones-${num}-image">Image</label>
+            <input type="file" name="milestones-${num}-image" id="milestones-${num}-image" class="form-control-file">
+        </div>`;
+    container.insertAdjacentHTML('beforeend', newMilestone);
+}
+</script>
+{% endblock %}

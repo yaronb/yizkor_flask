@@ -1,0 +1,56 @@
+{% extends "en/layout.html" %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <!-- Left Column (Other Content) -->
+        <div class="col-md-8">
+            <!-- Other content goes here -->
+            <!-- Form for Assigning Family Members -->
+            <h3>Assign Family Member</h3>
+            <form method="POST" action="{{ url_for('main.user') }}">
+                {{ assign_family_form.hidden_tag() }}
+                <div class="form-group">
+                    <label for="family_ids">Families</label>
+                    {{ assign_family_form.family_ids(class="form-control") }}
+                </div>
+                <button type="submit" class="btn btn-primary" name="assign_family">Assign Families</button>
+            </form>
+
+            <!-- Form for Changing Password -->
+            <h3>Change Password</h3>
+            <form method="POST" action="{{ url_for('main.user') }}">
+                {{ change_password_form.hidden_tag() }}
+                <div class="form-group">
+                    {{ change_password_form.current_password.label }}
+                    {{ change_password_form.current_password(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ change_password_form.new_password.label }}
+                    {{ change_password_form.new_password(class="form-control") }}
+                </div>
+                <div class="form-group">
+                    {{ change_password_form.confirm_new_password.label }}
+                    {{ change_password_form.confirm_new_password(class="form-control") }}
+                </div>
+                <button type="submit" class="btn btn-primary" name="change_password">Change Password</button>
+            </form>
+        </div>
+
+        <!-- Right Column (User Profile) -->
+        <div class="col-md-4">
+            <h1>User Profile</h1>
+            <h2>Welcome, {{ user.username }}</h2>
+
+            <h3>Assigned Families</h3>
+            <ul>
+                {% for family in user.families|sort(attribute='name') %}
+                <li>{{ family.name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

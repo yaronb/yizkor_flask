@@ -39,11 +39,19 @@
                         <a href="{{ url_for('auth.register') }}">Register</a>
                     </div>
                 </li>
+                <!-- Language Dropdown -->
+                <li class="dropdown">
+                    <a href="#">Language</a>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('main.index') }}">English</a>
+                        <a href="{{ url_for('main.index_he') }}">עברית</a>
+                    </div>
+                </li>
             </ul>
         </nav>
         <div class="search-bar">
             <form class="form-inline my-2 my-lg-0" method="GET" action="{{ url_for('main.search') }}">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="query">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search..." aria-label="Search" name="query">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
         </div>

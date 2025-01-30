@@ -7,6 +7,10 @@
 <form method="POST" action="{{ url_for('main.create_article_he') }}" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
     <div class="form-group">
+        {{ form.title.label }}
+        {{ form.title(class="form-control") }}
+    </div>
+    <div class="form-group">
         {{ form.title_he.label }}
         {{ form.title_he(class="form-control") }}
     </div>
@@ -19,23 +23,31 @@
         {{ form.family_id(class="form-control") }}
     </div>
     <div class="form-group">
+        {{ form.new_family_name.label }}
+        {{ form.new_family_name(class="form-control") }}
+    </div>
+    <div class="form-group">
         {{ form.new_family_name_he.label }}
         {{ form.new_family_name_he(class="form-control") }}
     </div>
     <div id="milestones">
         {% for milestone in form.milestones %}
-        <div class="form-group">
+        <div class="form-group milestone-item" draggable="true">
             {{ milestone.order(class="form-control milestone-order", type="hidden") }}
+            {{ milestone.title.label }}
+            {{ milestone.title(class="form-control") }}
             {{ milestone.title_he.label }}
             {{ milestone.title_he(class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ milestone.content_he.label }}
-            {{ milestone.content_he(class="form-control", rows=5) }}
-        </div>
-        <div class="form-group">
-            {{ milestone.image_he.label }}
-            {{ milestone.image_he(class="form-control-file") }}
+            <div class="form-group">
+                {{ milestone.content.label }}
+                {{ milestone.content(class="form-control", rows=5) }}
+                {{ milestone.content_he.label }}
+                {{ milestone.content_he(class="form-control", rows=5) }}
+            </div>
+            <div class="form-group">
+                {{ milestone.image_he.label }}
+                {{ milestone.image_he(class="form-control-file") }}
+            </div>
         </div>
         {% endfor %}
     </div>
@@ -50,17 +62,24 @@ function addMilestone() {
     var container = document.getElementById("milestones");
     var num = container.children.length / 3; // Number of milestones currently
     var newMilestone = `
-        <div class="form-group">
-            <label for="milestones-${num}-title">שם אבן דרך</label>
+        <div class="form-group milestone-item" draggable="true">
+            <input type="hidden" name="milestones-${num}-order" class="form-control milestone-order">
+            <label for="milestones-${num}-title">Name of Milestone</label>
             <input type="text" name="milestones-${num}-title" id="milestones-${num}-title" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label for="milestones-${num}-content">תוֹכֶן</label>
-            <textarea name="milestones-${num}-content" id="milestones-${num}-content" class="form-control" rows="5" required></textarea>
-        </div>
-        <div class="form-group">
-            <label for="milestones-${num}-image">תְמוּנָה</label>
-            <input type="file" name="milestones-${num}-image" id="milestones-${num}-image" class="form-control-file">
+            <label for="milestones-${num}-title_he">שם אבן דרך</label>
+            <input type="text" name="milestones-${num}-title_he" id="milestones-${num}-title_he" class="form-control" required>
+            <div class="form-group">
+                <label for="milestones-${num}-content">Content</label>
+                <textarea name="milestones-${num}-content" id="milestones-${num}-content" class="form-control" rows="5" required></textarea>
+                <label for="milestones-${num}-content_he">תוֹכֶן</label>
+                <textarea name="milestones-${num}-content_he" id="milestones-${num}-content_he" class="form-control" rows="5" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="milestones-${num}-image">Image</label>
+                <input type="file" name="milestones-${num}-image" id="milestones-${num}-image" class="form-control-file">
+                <label for="milestones-${num}-image_he">תְמוּנָה</label>
+                <input type="file" name="milestones-${num}-image_he" id="milestones-${num}-image_he" class="form-control-file">
+            </div>
         </div>`;
     container.insertAdjacentHTML('beforeend', newMilestone);
 }

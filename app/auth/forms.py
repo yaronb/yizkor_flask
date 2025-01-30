@@ -12,16 +12,15 @@ class MilestoneForm(FlaskForm):
     order = HiddenField('Order')
     image_he = FileField('תְמוּנָה') 
     
-
 class ArticleForm(FlaskForm):
    title = StringField('Title', validators=[DataRequired()]) 
    title_he = StringField('כותרת', validators=[DataRequired()])
    gregorian_death_date = DateField('Gregorian Death Date', format='%Y-%m-%d', validators=[DataRequired()]) 
    family_id = SelectField('Family', coerce=int, validators=[Optional()])
    new_family_name = StringField('New Family Name', validators=[Optional()])
-   milestones = FieldList(FormField(MilestoneForm), min_entries=1, max_entries=10) 
-   submit = SubmitField('Publish')
    new_family_name_he = StringField('שם משפחה חדש', validators=[Optional()])
+   milestones = FieldList(FormField(MilestoneForm), min_entries=0, max_entries=10) 
+   submit = SubmitField('Publish')
    submit_he = SubmitField('פרסם')   
 
 class LoginForm(FlaskForm):

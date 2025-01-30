@@ -66,6 +66,7 @@ def create_article():
         
         post = Post(
             title=form.title.data,
+            title_he=form.title_he.data,
             gregorian_death_date=gregorian_death_date,
             hebrew_year=hebrew_year,
             hebrew_month=hebrew_month,
@@ -80,7 +81,9 @@ def create_article():
         for milestone_form in form.milestones.data:
             milestone = Milestone(
                 title=milestone_form['title'],
+                title_he=milestone_form['title_he'],
                 content=milestone_form['content'],
+                content_he=milestone_form['content_he'],
                 post=post
             )
             if milestone_form['image']:
@@ -271,7 +274,7 @@ def change_password():
 ###########################################################
 
 @main.route('/he', endpoint='index_he')
-def index():
+def index_he():
     print("Index route reached")
     try:
         return render_template('he/index.html')
@@ -280,7 +283,7 @@ def index():
         return str(e)
 
 @main.route('/he/dashboard', endpoint='dashboard_he')
-def dashboard():
+def dashboard_he():
     try:
         return render_template('he/dashboard.html')
     except Exception as e:
@@ -288,12 +291,12 @@ def dashboard():
         return str(e)
     
 @main.route('/he/article/<int:post_id>', endpoint='article_he') 
-def article(post_id): 
+def article_he(post_id): 
     post = Post.query.get_or_404(post_id) 
     return render_template('he/article.html', post=post)    
     
 @main.route('/he/articles', endpoint='articles_he')
-def articles():
+def articles_he():
     try:
         families = Family.query.all()  # Fetch all families
         return render_template('he/articles.html', families=families)  # Pass families to the template
@@ -303,9 +306,9 @@ def articles():
 
 @main.route('/he/create_article', methods=['GET', 'POST'], endpoint='create_article_he')
 @login_required
-def create_article():
+def create_article_he():
     if current_user.role != 'author':
-        flash('You do not have permission to create an article.', 'danger')
+        flash('אין לך הרשאה ליצור מאמר.', 'danger')
         return redirect(url_for('main.index_he'))
 
     form = ArticleForm()
@@ -314,7 +317,7 @@ def create_article():
     if form.validate_on_submit():
         if form.new_family_name.data:
             # Add a new family if provided
-            new_family = Family(name=form.new_family_name.data)
+            new_family = Family(name=form.new_family_name.data, name_he=form.new_family_name_he.data)
             db.session.add(new_family)
             db.session.commit()
             family_id = new_family.id
@@ -327,12 +330,12 @@ def create_article():
         
         post = Post(
             title=form.title.data,
+            title_he=form.title_he.data,
             gregorian_death_date=gregorian_death_date,
             hebrew_year=hebrew_year,
             hebrew_month=hebrew_month,
             hebrew_day=hebrew_day,
-            family_id=family_id,
-            author=current_user
+            family_id=family_id,  
         )
         
         db.session.add(post)
@@ -341,7 +344,9 @@ def create_article():
         for milestone_form in form.milestones.data:
             milestone = Milestone(
                 title=milestone_form['title'],
+                title_he=milestone_form['title_he'],
                 content=milestone_form['content'],
+                content_he=milestone_form['content_he'],
                 post=post
             )
             if milestone_form['image']:
@@ -353,7 +358,7 @@ def create_article():
             db.session.add(milestone)
         
         db.session.commit()
-        flash('Your article has been published!', 'success')
+        flash('המאמר שלך נוצר!', 'success')
         return redirect(url_for('main.index'))
     
     return render_template('he/create_article.html', form=form)
@@ -435,7 +440,7 @@ def edit_article_he(post_id):
 
 @main.route('/he/users', methods=['GET', 'POST'], endpoint='users_he')
 @login_required
-def users():
+def users_he():
     users = User.query.all()
     families = Family.query.all()
     form = AssignFamilyForm()
@@ -452,7 +457,7 @@ def users():
 
 @main.route('/he/user', methods=['GET', 'POST'], endpoint='user_he')
 @login_required
-def user():
+def user_he():
     user = current_user
     families = Family.query.order_by(Family.name).all()
     assign_family_form = AssignFamilyForm()
@@ -486,7 +491,7 @@ def user():
     return render_template('he/user.html', user=user, families=families, assign_family_form=assign_family_form, change_password_form=change_password_form)
 
 @main.route('/he/search', methods=['GET'], endpoint='search_he')
-def search():
+def search_he():
     query = request.args.get('query')
     if query:
         results = Post.query.filter(Post.title.contains(query)).all()  # Example search on Post titles
@@ -496,7 +501,7 @@ def search():
 
 
 @main.route('/he/about', endpoint='about_he') 
-def about(): 
+def about_he(): 
     try: 
         return render_template('he/about.html') 
     except Exception as e: 
@@ -513,7 +518,7 @@ def contact():
     
 @main.route('/he/change_password', methods=['GET', 'POST'], endpoint='change_password_he')
 @login_required
-def change_password():
+def change_password_he():
     form = ChangePasswordForm()
     if form.validate_on_submit():
         user = current_user

@@ -33,6 +33,7 @@ class User(UserMixin, db.Model):
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(140), nullable=False)
+    title_he = db.Column(db.String(140), nullable=False)
     publication_date = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     gregorian_death_date = db.Column(db.Date, nullable=False)
@@ -53,6 +54,8 @@ class Milestone(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(140), nullable=False)
     content = db.Column(db.Text, nullable=False)
+    title_he = db.Column(db.String(140))  # Hebrew title
+    content_he = db.Column(db.Text)       # Hebrew content
     image_path = db.Column(db.String(120))
     order = db.Column(db.Integer, nullable=False, default=0)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
@@ -73,6 +76,7 @@ class Comment(db.Model):
 class Family(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False, unique=True)
+    name_he = db.Column(db.String(128), nullable=False, unique=True)
     members = db.relationship('Post', backref='family', lazy=True)
 
     def __repr__(self):

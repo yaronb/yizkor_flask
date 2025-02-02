@@ -28,8 +28,8 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Login')
-    email_he = StringField('דוא"ל', validators=[DataRequired(), Email()])
-    password_he = PasswordField('סיסמה', validators=[DataRequired()])
+    email_he = StringField('דוא"ל', validators=[Optional(), Email()])
+    password_he = PasswordField('סיסמה', validators=[Optional()])
     remember_me_he = BooleanField('זכור אותי')
     submit_he = SubmitField('התחבר')
 
